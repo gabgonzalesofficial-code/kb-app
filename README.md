@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KB App - Knowledge Base Application
+
+A production-ready Next.js App Router application with Supabase authentication, document management, and AWS S3 file storage.
+
+## Features
+
+- 🔐 **Authentication** - Email/password login with role-based access control
+- 📄 **Document Management** - Upload, search, edit, and delete documents
+- 🔍 **Full-Text Search** - Postgres full-text search with relevance ranking
+- 👥 **User Management** - Admin panel for managing user roles
+- 📤 **File Upload** - Secure file uploads with signed URLs
+- 🎨 **Modern UI** - Tailwind CSS with dark mode support
+- 🔒 **RBAC** - Role-based access control (Admin, Editor, Viewer)
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Runtime:** Bun/Node.js
+- **Database:** Supabase (PostgreSQL)
+- **Storage:** AWS S3 / Supabase Storage
+- **Styling:** Tailwind CSS v4
+- **Authentication:** Supabase Auth
+- **TypeScript:** Full type safety
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ or Bun
+- Supabase account
+- AWS S3 or Supabase Storage bucket
+
+### Installation
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/YOUR_USERNAME/kb-app.git
+cd kb-app
+```
+
+2. **Install dependencies:**
+```bash
+npm install
+# or
+bun install
+```
+
+3. **Set up environment variables:**
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your credentials:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_S3_BUCKET=your_bucket_name
+AWS_S3_ENDPOINT=your_s3_endpoint
+```
+
+4. **Set up database:**
+   - Run SQL scripts in Supabase SQL Editor:
+     - `lib/profiles-schema-updated.sql` - Creates profiles table
+     - `lib/schema.sql` - Creates documents table (if needed)
+
+5. **Run development server:**
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 # or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. **Create a test user:**
+   - Go to Supabase Dashboard → Authentication → Users
+   - Create a user
+   - Run `lib/create-profile-by-email.sql` to set admin role
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for detailed deployment instructions.
 
-## Learn More
+### Quick Deploy to Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Push code to GitHub
+2. Import project in Vercel
+3. Add environment variables
+4. Deploy!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+kb-app/
+├── app/
+│   ├── (authenticated)/    # Protected routes
+│   │   ├── documents/      # Document list & search
+│   │   ├── upload/         # File upload
+│   │   └── users/          # User management
+│   ├── api/                # API routes
+│   ├── components/         # React components
+│   └── login/              # Login page
+├── lib/
+│   ├── auth.ts             # Authentication helpers
+│   ├── permissions.ts     # RBAC helpers
+│   ├── storage.ts          # S3 client
+│   └── upload.ts           # Upload helpers
+└── middleware.ts           # Route protection
+```
 
-## Deploy on Vercel
+## Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+See `.env.example` for all required environment variables.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
