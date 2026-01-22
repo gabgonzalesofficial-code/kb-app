@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import SearchInput from '@/app/(authenticated)/documents/components/SearchInput';
 
 interface Note {
   id: string;
@@ -13,15 +14,32 @@ interface Note {
 
 export default function NotesList() {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ title: '', content: '' });
   const [saving, setSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchNotes();
   }, []);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredNotes(notes);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = notes.filter(
+      (note) =>
+        note.title.toLowerCase().includes(query) ||
+        note.content.toLowerCase().includes(query)
+    );
+    setFilteredNotes(filtered);
+  }, [searchQuery, notes]);
 
   const fetchNotes = async () => {
     setLoading(true);
@@ -30,12 +48,17 @@ export default function NotesList() {
       if (!response.ok) throw new Error('Failed to fetch notes');
       const data = await response.json();
       setNotes(data.notes || []);
+      setFilteredNotes(data.notes || []);
     } catch (error) {
       console.error('Error fetching notes:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +131,7 @@ export default function NotesList() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          My Notes ({notes.length})
+          My Notes ({searchQuery ? filteredNotes.length : notes.length})
         </h2>
         <button
           onClick={() => {
@@ -121,6 +144,20 @@ export default function NotesList() {
           + New Note
         </button>
       </div>
+
+      <div className="max-w-2xl">
+        <SearchInput
+          onSearch={handleSearch}
+          debounceMs={300}
+          placeholder="Search notes..."
+        />
+      </div>
+
+      {searchQuery && (
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {filteredNotes.length} result{filteredNotes.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
+        </div>
+      )}
 
       {showForm && (
         <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
@@ -179,12 +216,14 @@ export default function NotesList() {
       )}
 
       <div className="grid gap-4">
-        {notes.length === 0 ? (
+        {filteredNotes.length === 0 ? (
           <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-            No notes yet. Create your first note!
+            {searchQuery
+              ? `No notes found matching "${searchQuery}"`
+              : 'No notes yet. Create your first note!'}
           </div>
         ) : (
-          notes.map((note) => (
+          filteredNotes.map((note) => (
             <div
               key={note.id}
               className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900"

@@ -1,6 +1,5 @@
 import { getUserWithProfile } from '@/lib/auth';
 import LogoutButton from './LogoutButton';
-import GlobalSearch from './GlobalSearch';
 
 export default async function Header() {
   const user = await getUserWithProfile();
@@ -13,22 +12,19 @@ export default async function Header() {
         </h1>
         <nav className="flex items-center gap-4">
           {user && (
-            <>
-              <GlobalSearch />
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {user.full_name || user.email}
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {user.full_name || user.email}
+                </p>
+                {user.role && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {user.role}
                   </p>
-                  {user.role && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {user.role}
-                    </p>
-                  )}
-                </div>
-                <LogoutButton />
+                )}
               </div>
-            </>
+              <LogoutButton />
+            </div>
           )}
         </nav>
       </div>

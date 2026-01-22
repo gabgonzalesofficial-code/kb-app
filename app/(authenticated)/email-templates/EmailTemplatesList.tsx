@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import SearchInput from '@/app/(authenticated)/documents/components/SearchInput';
 
 interface EmailTemplate {
   id: string;
@@ -14,15 +15,33 @@ interface EmailTemplate {
 
 export default function EmailTemplatesList() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [filteredTemplates, setFilteredTemplates] = useState<EmailTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: '', subject: '', body: '' });
   const [saving, setSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchTemplates();
   }, []);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredTemplates(templates);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = templates.filter(
+      (template) =>
+        template.name.toLowerCase().includes(query) ||
+        template.subject.toLowerCase().includes(query) ||
+        template.body.toLowerCase().includes(query)
+    );
+    setFilteredTemplates(filtered);
+  }, [searchQuery, templates]);
 
   const fetchTemplates = async () => {
     setLoading(true);
@@ -31,12 +50,17 @@ export default function EmailTemplatesList() {
       if (!response.ok) throw new Error('Failed to fetch templates');
       const data = await response.json();
       setTemplates(data.templates || []);
+      setFilteredTemplates(data.templates || []);
     } catch (error) {
       console.error('Error fetching templates:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +134,7 @@ export default function EmailTemplatesList() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Templates ({templates.length})
+          Templates ({searchQuery ? filteredTemplates.length : templates.length})
         </h2>
         <button
           onClick={() => {
@@ -123,6 +147,20 @@ export default function EmailTemplatesList() {
           + New Template
         </button>
       </div>
+
+      <div className="max-w-2xl">
+        <SearchInput
+          onSearch={handleSearch}
+          debounceMs={300}
+          placeholder="Search email templates..."
+        />
+      </div>
+
+      {searchQuery && (
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {filteredTemplates.length} result{filteredTemplates.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
+        </div>
+      )}
 
       {showForm && (
         <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
@@ -194,12 +232,14 @@ export default function EmailTemplatesList() {
       )}
 
       <div className="grid gap-4">
-        {templates.length === 0 ? (
+        {filteredTemplates.length === 0 ? (
           <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-            No email templates yet. Create your first template!
+            {searchQuery
+              ? `No templates found matching "${searchQuery}"`
+              : 'No email templates yet. Create your first template!'}
           </div>
         ) : (
-          templates.map((template) => (
+          filteredTemplates.map((template) => (
             <div
               key={template.id}
               className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900"

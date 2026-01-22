@@ -5,9 +5,10 @@ import { useState, useEffect, useCallback } from 'react';
 interface SearchInputProps {
   onSearch: (query: string) => void;
   debounceMs?: number;
+  placeholder?: string;
 }
 
-export default function SearchInput({ onSearch, debounceMs = 300 }: SearchInputProps) {
+export default function SearchInput({ onSearch, debounceMs = 300, placeholder = 'Search...' }: SearchInputProps) {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function SearchInput({ onSearch, debounceMs = 300 }: SearchInputP
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search documents..."
+        placeholder={placeholder}
         className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
       />
     </div>
