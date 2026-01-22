@@ -96,18 +96,38 @@ kb-app/
 ├── app/
 │   ├── (authenticated)/    # Protected routes
 │   │   ├── documents/      # Document list & search
+│   │   ├── email-templates/ # Email templates management
+│   │   ├── notes/          # Personal notes
 │   │   ├── upload/         # File upload
 │   │   └── users/          # User management
 │   ├── api/                # API routes
-│   ├── components/         # React components
+│   ├── components/         # Shared React components
+│   ├── hooks/              # Custom React hooks
 │   └── login/              # Login page
 ├── lib/
 │   ├── auth.ts             # Authentication helpers
 │   ├── permissions.ts     # RBAC helpers
 │   ├── storage.ts          # S3 client
-│   └── upload.ts           # Upload helpers
+│   ├── upload.ts           # Upload helpers
+│   ├── utils.ts            # Utility functions
+│   ├── errors.ts           # Error handling
+│   ├── validation.ts       # Input validation
+│   └── api-client.ts       # API client wrapper
+├── docs/                   # Documentation
 └── middleware.ts           # Route protection
 ```
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[Architecture](./docs/ARCHITECTURE.md)** - System architecture and design patterns
+- **[API Documentation](./docs/API.md)** - Complete API reference
+- **[Components](./docs/COMPONENTS.md)** - Component documentation
+- **[Database](./docs/DATABASE.md)** - Database schema and relationships
+- **[Development](./docs/DEVELOPMENT.md)** - Development guide and best practices
+- **[Deployment](./docs/DEPLOYMENT.md)** - Deployment instructions
+- **[New Features](./docs/NEW_FEATURES.md)** - Feature documentation
 
 ## Environment Variables
 
