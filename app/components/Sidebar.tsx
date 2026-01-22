@@ -26,6 +26,8 @@ export default function Sidebar() {
     { label: 'Dashboard', href: '/', icon: '📊', permission: null },
     { label: 'Upload', href: '/upload', icon: '📤', permission: 'canUpload' as const },
     { label: 'Documents', href: '/documents', icon: '📄', permission: null },
+    { label: 'Email Templates', href: '/email-templates', icon: '📧', permission: 'canUpload' as const }, // Admin and Editor
+    { label: 'Personal Notes', href: '/notes', icon: '📝', permission: null }, // All users
     { label: 'Users', href: '/users', icon: '👥', permission: 'canManageUsers' as const },
     { label: 'Settings', href: '/settings', icon: '⚙️', permission: null },
   ];

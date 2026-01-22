@@ -23,13 +23,13 @@ export default function UploadForm() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      // Validate file size (20MB)
-      const maxSize = 20 * 1024 * 1024;
+      // Validate file size (50MB)
+      const maxSize = 50 * 1024 * 1024;
       if (selectedFile.size > maxSize) {
         setUploadState({
           status: 'error',
           progress: 0,
-          error: 'File size exceeds 20MB limit',
+          error: 'File size exceeds 50MB limit',
         });
         return;
       }
@@ -213,6 +213,9 @@ export default function UploadForm() {
             disabled={uploadState.status === 'uploading' || uploadState.status === 'saving'}
             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100 dark:text-gray-400 dark:file:bg-blue-900 dark:file:text-blue-300 disabled:opacity-50"
           />
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Maximum file size: 50MB. Supported formats: PDF, Word, Excel, Images, ZIP, and more.
+          </p>
           {file && (
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)

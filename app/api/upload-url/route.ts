@@ -5,7 +5,7 @@ import { s3Client } from '@/lib/storage';
 import { getUserWithProfile } from '@/lib/auth';
 import { requirePermission } from '@/lib/permissions';
 
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
   'image/png',
@@ -18,6 +18,9 @@ const ALLOWED_MIME_TYPES = [
   'text/csv',
   'application/vnd.ms-excel',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/zip',
+  'application/x-zip-compressed',
+  'application/x-zip',
 ];
 
 export async function POST(request: NextRequest) {
