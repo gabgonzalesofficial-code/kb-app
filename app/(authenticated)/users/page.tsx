@@ -25,6 +25,14 @@ export default function UsersPage() {
     role: 'viewer' as 'admin' | 'editor' | 'viewer',
   });
   const [addFormError, setAddFormError] = useState<string | null>(null);
+  const [resettingPasswordId, setResettingPasswordId] = useState<string | null>(null);
+  const [resetPasswordData, setResetPasswordData] = useState({
+    userId: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [resetPasswordError, setResetPasswordError] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -280,21 +288,172 @@ export default function UsersPage() {
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                        <select
-                          value={user.role}
-                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                          disabled={updatingId === user.id}
-                          className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:opacity-50"
-                        >
-                          <option value="viewer">Viewer</option>
-                          <option value="editor">Editor</option>
-                          <option value="admin">Admin</option>
-                        </select>
+                        <div className="flex items-center gap-2 justify-end">
+                          <select
+                            value={user.role}
+                            onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                            disabled={updatingId === user.id}
+                            className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:opacity-50"
+                          >
+                            <option value="viewer">Viewer</option>
+                            <option value="editor">Editor</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                          <button
+                            onClick={() => {
+                              setResetPasswordData({
+                                userId: user.id,
+                                newPassword: '',
+                                confirmPassword: '',
+                              });
+                              setShowResetPasswordModal(true);
+                              setResetPasswordError(null);
+                            }}
+                            className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                            title="Reset password"
+                          >
+                            🔑
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* Reset Password Modal */}
+        {showResetPasswordModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900 w-full max-w-md">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Reset User Password
+              </h2>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setResettingPasswordId(resetPasswordData.userId);
+                  setResetPasswordError(null);
+
+                  if (resetPasswordData.newPassword !== resetPasswordData.confirmPassword) {
+                    setResetPasswordError('Passwords do not match');
+                    setResettingPasswordId(null);
+                    return;
+                  }
+
+                  if (resetPasswordData.newPassword.length < 6) {
+                    setResetPasswordError('Password must be at least 6 characters');
+                    setResettingPasswordId(null);
+                    return;
+                  }
+
+                  try {
+                    const response = await fetch(
+                      `/api/users/${resetPasswordData.userId}/reset-password`,
+                      {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          newPassword: resetPasswordData.newPassword,
+                        }),
+                      }
+                    );
+
+                    if (!response.ok) {
+                      const error = await response.json();
+                      throw new Error(error.error || 'Failed to reset password');
+                    }
+
+                    // Success - close modal and reset form
+                    setShowResetPasswordModal(false);
+                    setResetPasswordData({
+                      userId: '',
+                      newPassword: '',
+                      confirmPassword: '',
+                    });
+                    alert('Password reset successfully!');
+                  } catch (error) {
+                    setResetPasswordError(
+                      error instanceof Error ? error.message : 'Failed to reset password'
+                    );
+                  } finally {
+                    setResettingPasswordId(null);
+                  }
+                }}
+                className="space-y-4"
+              >
+                {resetPasswordError && (
+                  <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-400">
+                    {resetPasswordError}
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    New Password <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={resetPasswordData.newPassword}
+                    onChange={(e) =>
+                      setResetPasswordData({
+                        ...resetPasswordData,
+                        newPassword: e.target.value,
+                      })
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                    placeholder="Minimum 6 characters"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Confirm Password <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={resetPasswordData.confirmPassword}
+                    onChange={(e) =>
+                      setResetPasswordData({
+                        ...resetPasswordData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                    placeholder="Confirm password"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={resettingPasswordId !== null}
+                    className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                  >
+                    {resettingPasswordId ? 'Resetting...' : 'Reset Password'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowResetPasswordModal(false);
+                      setResetPasswordData({
+                        userId: '',
+                        newPassword: '',
+                        confirmPassword: '',
+                      });
+                      setResetPasswordError(null);
+                    }}
+                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
