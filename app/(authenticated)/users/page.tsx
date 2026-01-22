@@ -16,6 +16,15 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [addingUser, setAddingUser] = useState(false);
+  const [addFormData, setAddFormData] = useState({
+    email: '',
+    password: '',
+    full_name: '',
+    role: 'viewer' as 'admin' | 'editor' | 'viewer',
+  });
+  const [addFormError, setAddFormError] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -62,18 +71,173 @@ export default function UsersPage() {
     }
   };
 
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAddingUser(true);
+    setAddFormError(null);
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(addFormData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create user');
+      }
+
+      // Reset form and refresh list
+      setAddFormData({
+        email: '',
+        password: '',
+        full_name: '',
+        role: 'viewer',
+      });
+      setShowAddForm(false);
+      await fetchUsers();
+    } catch (error) {
+      setAddFormError(error instanceof Error ? error.message : 'Failed to create user');
+    } finally {
+      setAddingUser(false);
+    }
+  };
+
 
   return (
     <RoleGate allowedRoles={['admin']}>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            User Management
-          </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Manage user roles and permissions.
-          </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              User Management
+            </h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Manage user roles and permissions.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setShowAddForm(true);
+              setAddFormError(null);
+            }}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+          >
+            + Add User
+          </button>
         </div>
+
+        {showAddForm && (
+          <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              Add New User
+            </h2>
+            <form onSubmit={handleAddUser} className="space-y-4">
+              {addFormError && (
+                <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-400">
+                  {addFormError}
+                </div>
+              )}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={addFormData.email}
+                    onChange={(e) =>
+                      setAddFormData({ ...addFormData, email: e.target.value })
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                    placeholder="user@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={addFormData.password}
+                    onChange={(e) =>
+                      setAddFormData({ ...addFormData, password: e.target.value })
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                    placeholder="Minimum 6 characters"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={addFormData.full_name}
+                    onChange={(e) =>
+                      setAddFormData({ ...addFormData, full_name: e.target.value })
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Role <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    required
+                    value={addFormData.role}
+                    onChange={(e) =>
+                      setAddFormData({
+                        ...addFormData,
+                        role: e.target.value as 'admin' | 'editor' | 'viewer',
+                      })
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                  >
+                    <option value="viewer">Viewer</option>
+                    <option value="editor">Editor</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  disabled={addingUser}
+                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                >
+                  {addingUser ? 'Creating...' : 'Create User'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setAddFormError(null);
+                    setAddFormData({
+                      email: '',
+                      password: '',
+                      full_name: '',
+                      role: 'viewer',
+                    });
+                  }}
+                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
