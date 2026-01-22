@@ -57,11 +57,24 @@ export async function GET(request: NextRequest) {
       s3Key = s3Key.substring(bucket.length + 1);
     }
 
+    // Extract original filename from s3_key
+    // Format: uploads/user-id/timestamp-filename.ext
+    const keyParts = s3Key.split('/');
+    const filenameWithTimestamp = keyParts[keyParts.length - 1];
+    // Remove timestamp prefix (format: timestamp-filename.ext)
+    const timestampMatch = filenameWithTimestamp.match(/^\d+-(.+)$/);
+    const originalFilename = timestampMatch 
+      ? timestampMatch[1] 
+      : filenameWithTimestamp;
+
+    // Use original filename with extension, fallback to title if extraction fails
+    const downloadFilename = originalFilename || document.title || 'document';
+
     // Generate signed GET URL (valid for 1 hour)
     const command = new GetObjectCommand({
       Bucket: bucket,
       Key: s3Key,
-      ResponseContentDisposition: `attachment; filename="${document.title || 'document'}"`,
+      ResponseContentDisposition: `attachment; filename="${downloadFilename}"`,
     });
 
     const signedUrl = await getSignedUrl(s3Client, command, {
@@ -70,7 +83,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       url: signedUrl,
-      filename: document.title || 'document',
+      filename: downloadFilename,
     });
   } catch (error) {
     console.error('Error generating download URL:', error);

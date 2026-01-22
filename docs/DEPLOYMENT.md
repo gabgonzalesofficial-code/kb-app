@@ -27,7 +27,7 @@ git commit -m "Initial commit: KB App with authentication and document managemen
 
 ```bash
 # Add remote (replace YOUR_USERNAME with your GitHub username)
-git remote add origin https://github.com/YOUR_USERNAME/kb-app.git
+git remote add origin https://github.com/gabgonzalesofficial-code/kb-app.git
 
 # Rename branch to main
 git branch -M main
