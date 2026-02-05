@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { usePermissions } from '@/app/hooks/usePermissions';
+import { usePermissionsContext } from '@/app/contexts/PermissionsContext';
 import EditDocumentModal from './EditDocumentModal';
 
 export interface Document {
@@ -24,7 +24,7 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const { permissions } = usePermissions();
+  const { permissions } = usePermissionsContext();
 
   const handleDownload = async (documentId: string) => {
     setDownloadingId(documentId);
@@ -143,11 +143,11 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
         {documents.map((document) => (
           <div
             key={document.id}
-            className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+            className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
                   {document.title}
                 </h3>
                 {document.description && (
@@ -155,13 +155,13 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
                     {document.description}
                   </p>
                 )}
-              <div className="mt-4 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                <span>{formatDate(document.created_at)}</span>
+                <div className="mt-4 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                  <span>{formatDate(document.created_at)}</span>
+                </div>
               </div>
-              </div>
-              <div className="ml-4 flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:ml-4 sm:gap-2">
                 {downloadingId === document.id ? (
-                  <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                  <div className="flex items-center justify-center gap-2 text-sm text-blue-600 dark:text-blue-400 py-2">
                     <svg
                       className="h-5 w-5 animate-spin"
                       fill="none"
@@ -181,20 +181,20 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>
-                    Downloading...
+                    <span className="sm:hidden">Downloading...</span>
                   </div>
                 ) : (
                   <>
                     <button
                       onClick={() => handleDownload(document.id)}
-                      className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                      className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     >
                       Download
                     </button>
                     {permissions?.canEdit && (
                       <button
                         onClick={() => setEditingId(document.id)}
-                        className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        className="w-full sm:w-auto rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                       >
                         Edit
                       </button>
@@ -203,7 +203,7 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
                       <button
                         onClick={() => handleDelete(document.id)}
                         disabled={deletingId === document.id}
-                        className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full sm:w-auto rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {deletingId === document.id ? 'Deleting...' : 'Delete'}
                       </button>

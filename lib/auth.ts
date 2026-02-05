@@ -44,24 +44,30 @@ export async function getSession() {
 
 /**
  * Get the current user with profile and role
+ * Optimized to use a single Supabase client instance
  */
 export async function getUserWithProfile(): Promise<UserProfile | null> {
-  const user = await getCurrentUser();
-  if (!user) {
+  const supabase = await createServerSupabaseClient();
+  
+  // Get user and profile in parallel where possible
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
     return null;
   }
 
-  const supabase = await createServerSupabaseClient();
-
-  // Fetch user profile from profiles table
-  const { data: profile, error } = await supabase
+  // Fetch user profile from profiles table (only the fields we need)
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('id, full_name, role')
     .eq('id', user.id)
-    .single();
+    .maybeSingle(); // Use maybeSingle instead of single to avoid errors if profile doesn't exist
 
-  if (error) {
-    // If profiles table doesn't exist, return basic user info
+  if (profileError || !profile) {
+    // If profiles table doesn't exist or profile not found, return basic user info
     return {
       id: user.id,
       email: user.email || '',

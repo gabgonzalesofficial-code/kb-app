@@ -3,8 +3,8 @@ import LoginForm from './LoginForm';
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md space-y-8 rounded-lg border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-800 dark:bg-gray-800">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="w-full max-w-md space-y-8 rounded-lg border border-gray-200 bg-white p-6 sm:p-8 shadow-lg dark:border-gray-800 dark:bg-gray-800">
         <div>
           <h1 className="text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
             Sign in to Knowledge Repository

@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { getUserWithProfile } from '@/lib/auth';
 import { getUserPermissions } from '@/lib/permissions';
 
+// Cache permissions for 60 seconds to reduce database queries
+export const revalidate = 60;
+
 export async function GET() {
   try {
     const user = await getUserWithProfile();

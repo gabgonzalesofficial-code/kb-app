@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react';
 import { Permission } from '@/lib/permissions';
 
+/**
+ * @deprecated Use usePermissionsContext from '@/app/contexts/PermissionsContext' instead.
+ * This hook makes an API call on every component mount, which is inefficient.
+ * The PermissionsContext provides permissions fetched once at the layout level.
+ */
 export function usePermissions() {
   const [permissions, setPermissions] = useState<Permission | null>(null);
   const [loading, setLoading] = useState(true);

@@ -129,8 +129,8 @@ export default function NotesList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
           My Notes ({searchQuery ? filteredNotes.length : notes.length})
         </h2>
         <button
@@ -139,7 +139,7 @@ export default function NotesList() {
             setEditingId(null);
             setFormData({ title: '', content: '' });
           }}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+          className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
         >
           + New Note
         </button>
@@ -160,7 +160,7 @@ export default function NotesList() {
       )}
 
       {showForm && (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+        <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
             {editingId ? 'Edit Note' : 'New Note'}
           </h3>
@@ -191,11 +191,11 @@ export default function NotesList() {
                 placeholder="Write your note here..."
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
               </button>
@@ -206,7 +206,7 @@ export default function NotesList() {
                   setEditingId(null);
                   setFormData({ title: '', content: '' });
                 }}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="w-full sm:w-auto rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 Cancel
               </button>
@@ -226,30 +226,30 @@ export default function NotesList() {
           filteredNotes.map((note) => (
             <div
               key={note.id}
-              className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900"
+              className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900"
             >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
                     {note.title}
                   </h3>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap break-words">
                     {note.content}
                   </p>
                   <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
                     Updated: {formatDate(note.updated_at)}
                   </p>
                 </div>
-                <div className="flex gap-2 ml-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:ml-4">
                   <button
                     onClick={() => handleEdit(note)}
-                    className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className="w-full sm:w-auto rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(note.id)}
-                    className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900"
+                    className="w-full sm:w-auto rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900"
                   >
                     Delete
                   </button>

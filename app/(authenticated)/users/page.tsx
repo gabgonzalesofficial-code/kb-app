@@ -118,9 +118,9 @@ export default function UsersPage() {
   return (
     <RoleGate allowedRoles={['admin']}>
       <div className="space-y-6">
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
               User Management
             </h1>
             <p className="mt-2 text-gray-600 dark:text-gray-400">
@@ -132,7 +132,7 @@ export default function UsersPage() {
               setShowAddForm(true);
               setAddFormError(null);
             }}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+            className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
           >
             + Add User
           </button>
@@ -252,82 +252,140 @@ export default function UsersPage() {
             <div className="text-gray-600 dark:text-gray-400">Loading users...</div>
           </div>
         ) : (
-          <div className="rounded-lg border border-gray-200 bg-white shadow dark:border-gray-800 dark:bg-gray-900">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-                <thead className="bg-gray-50 dark:bg-gray-800">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      Role
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-800 dark:bg-gray-900">
-                  {users.map((user) => (
-                    <tr key={user.id}>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                        {user.full_name || 'No name'}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm">
-                        <span
-                          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                            user.role === 'admin'
-                              ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
-                              : user.role === 'editor'
-                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-                              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-                          }`}
-                        >
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                        <div className="flex items-center gap-2 justify-end">
-                          <select
-                            value={user.role}
-                            onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                            disabled={updatingId === user.id}
-                            className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:opacity-50"
-                          >
-                            <option value="viewer">Viewer</option>
-                            <option value="editor">Editor</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                          <button
-                            onClick={() => {
-                              setResetPasswordData({
-                                userId: user.id,
-                                newPassword: '',
-                                confirmPassword: '',
-                              });
-                              setShowResetPasswordModal(true);
-                              setResetPasswordError(null);
-                            }}
-                            className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                            title="Reset password"
-                          >
-                            🔑
-                          </button>
-                        </div>
-                      </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block rounded-lg border border-gray-200 bg-white shadow dark:border-gray-800 dark:bg-gray-900">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Name
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Role
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-800 dark:bg-gray-900">
+                    {users.map((user) => (
+                      <tr key={user.id}>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                          {user.full_name || 'No name'}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm">
+                          <span
+                            className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                              user.role === 'admin'
+                                ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
+                                : user.role === 'editor'
+                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+                                : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+                            }`}
+                          >
+                            {user.role}
+                          </span>
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                          <div className="flex items-center gap-2 justify-end">
+                            <select
+                              value={user.role}
+                              onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                              disabled={updatingId === user.id}
+                              className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:opacity-50"
+                            >
+                              <option value="viewer">Viewer</option>
+                              <option value="editor">Editor</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                            <button
+                              onClick={() => {
+                                setResetPasswordData({
+                                  userId: user.id,
+                                  newPassword: '',
+                                  confirmPassword: '',
+                                });
+                                setShowResetPasswordModal(true);
+                                setResetPasswordError(null);
+                              }}
+                              className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                              title="Reset password"
+                            >
+                              🔑
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className="rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-800 dark:bg-gray-900"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        {user.full_name || 'No name'}
+                      </h3>
+                      <span
+                        className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                          user.role === 'admin'
+                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
+                            : user.role === 'editor'
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+                        }`}
+                      >
+                        {user.role}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <select
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      disabled={updatingId === user.id}
+                      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:opacity-50"
+                    >
+                      <option value="viewer">Viewer</option>
+                      <option value="editor">Editor</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                    <button
+                      onClick={() => {
+                        setResetPasswordData({
+                          userId: user.id,
+                          newPassword: '',
+                          confirmPassword: '',
+                        });
+                        setShowResetPasswordModal(true);
+                        setResetPasswordError(null);
+                      }}
+                      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      🔑 Reset Password
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* Reset Password Modal */}
         {showResetPasswordModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900 w-full max-w-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+            <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900 w-full max-w-md">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Reset User Password
               </h2>

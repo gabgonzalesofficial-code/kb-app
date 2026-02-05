@@ -1,21 +1,35 @@
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+import MobileLayoutWrapper from '../components/MobileLayoutWrapper';
+import { PermissionsProvider } from '../contexts/PermissionsContext';
+import { getUserWithProfile } from '@/lib/auth';
+import { getUserPermissions } from '@/lib/permissions';
 
 // Force dynamic rendering since we need auth state
 export const dynamic = 'force-dynamic';
 
-export default function AuthenticatedLayout({
+export default async function AuthenticatedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Fetch user and permissions once at layout level
+  const user = await getUserWithProfile();
+  const permissions = getUserPermissions(user);
+
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex flex-1 flex-col ml-64">
-        <Header />
-        <main className="flex-1 p-6">{children}</main>
+    <PermissionsProvider
+      permissions={permissions}
+      role={user?.role || null}
+      loading={false}
+    >
+      <div className="flex min-h-screen">
+        <MobileLayoutWrapper>
+          <div className="flex flex-1 flex-col lg:ml-64">
+            <Header />
+            <main className="flex-1 p-4 lg:p-6">{children}</main>
+          </div>
+        </MobileLayoutWrapper>
       </div>
-    </div>
+    </PermissionsProvider>
   );
 }

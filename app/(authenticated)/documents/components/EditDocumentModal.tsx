@@ -38,8 +38,8 @@ export default function EditDocumentModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-lg dark:border-gray-800 dark:bg-gray-900">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-lg dark:border-gray-800 dark:bg-gray-900">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             Edit Document

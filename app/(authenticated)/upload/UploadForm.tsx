@@ -156,7 +156,7 @@ export default function UploadForm() {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>

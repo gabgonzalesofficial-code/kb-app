@@ -1,6 +1,7 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
+import { usePermissionsContext } from '@/app/contexts/PermissionsContext';
 
 interface RoleGateProps {
   allowedRoles: ('admin' | 'editor' | 'viewer')[];
@@ -13,31 +14,13 @@ export default function RoleGate({
   children,
   fallback = null,
 }: RoleGateProps) {
-  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const { role, loading } = usePermissionsContext();
 
-  useEffect(() => {
-    async function checkRole() {
-      try {
-        const response = await fetch('/api/user/permissions');
-        if (response.ok) {
-          const data = await response.json();
-          setHasAccess(allowedRoles.includes(data.role));
-        } else {
-          setHasAccess(false);
-        }
-      } catch (error) {
-        setHasAccess(false);
-      }
-    }
-
-    checkRole();
-  }, [allowedRoles]);
-
-  if (hasAccess === null) {
+  if (loading) {
     return null;
   }
 
-  if (!hasAccess) {
+  if (!role || !allowedRoles.includes(role as 'admin' | 'editor' | 'viewer')) {
     return <>{fallback}</>;
   }
 

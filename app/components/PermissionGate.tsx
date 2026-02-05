@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { usePermissions } from '@/app/hooks/usePermissions';
+import { usePermissionsContext } from '@/app/contexts/PermissionsContext';
 
 interface PermissionGateProps {
   permission: 'canUpload' | 'canEdit' | 'canDelete' | 'canManageUsers' | 'canRead';
@@ -14,7 +14,7 @@ export default function PermissionGate({
   children,
   fallback = null,
 }: PermissionGateProps) {
-  const { permissions, loading } = usePermissions();
+  const { permissions, loading } = usePermissionsContext();
 
   if (loading) {
     return null;
