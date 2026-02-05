@@ -7,7 +7,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8 rounded-lg border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-800 dark:bg-gray-800">
         <div>
           <h1 className="text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Sign in to KB App
+            Sign in to Knowledge Repository
           </h1>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Enter your email and password to continue

@@ -8,7 +8,7 @@ export default async function Header() {
     <header className="sticky top-0 z-50 flex h-16 items-center border-b border-gray-200 bg-white px-6 dark:border-gray-800 dark:bg-gray-900">
       <div className="flex w-full items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          KB App
+          Knowledge Repository
         </h1>
         <nav className="flex items-center gap-4">
           {user && (

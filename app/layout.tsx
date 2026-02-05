@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KB App",
-  description: "Knowledge Base Application",
+  title: "Knowledge Repository",
+  description: "Knowledge Repository Application",
 };
 
 export default function RootLayout({

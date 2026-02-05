@@ -2,7 +2,7 @@
 
 ## Overview
 
-KB App is a full-stack Next.js application built with TypeScript, Supabase, and AWS S3. It follows modern web development best practices with a focus on security, performance, and maintainability.
+Knowledge Repository is a full-stack Next.js application built with TypeScript, Supabase, and AWS S3. It follows modern web development best practices with a focus on security, performance, and maintainability.
 
 ## Tech Stack
 

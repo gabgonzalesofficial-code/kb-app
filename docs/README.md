@@ -1,6 +1,6 @@
 # Documentation Index
 
-Welcome to the KB App documentation! This directory contains comprehensive documentation for all aspects of the application.
+Welcome to the Knowledge Repository documentation! This directory contains comprehensive documentation for all aspects of the application.
 
 ## 📚 Documentation Files
 

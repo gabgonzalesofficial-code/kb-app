@@ -12,7 +12,7 @@
 ```bash
 git init
 git add .
-git commit -m "Initial commit: KB App with authentication and document management"
+git commit -m "Initial commit: Knowledge Repository with authentication and document management"
 ```
 
 ### Create GitHub Repository

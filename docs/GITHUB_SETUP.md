@@ -23,7 +23,7 @@ git status
 git add .
 
 # Commit changes
-git commit -m "Initial commit: KB App with authentication and document management"
+git commit -m "Initial commit: Knowledge Repository with authentication and document management"
 
 # Add remote (replace YOUR_USERNAME with your GitHub username)
 git remote add origin https://github.com/YOUR_USERNAME/kb-app.git

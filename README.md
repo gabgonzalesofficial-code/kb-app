@@ -1,4 +1,4 @@
-# KB App - Knowledge Base Application
+# Knowledge Repository
 
 A production-ready Next.js App Router application with Supabase authentication, document management, and AWS S3 file storage.
 
