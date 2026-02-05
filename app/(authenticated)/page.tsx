@@ -1,6 +1,8 @@
-import DashboardStats from './components/DashboardStats';
+import { Suspense } from 'react';
+import DashboardStatsServer from './components/DashboardStatsServer';
+import DashboardStatsSkeleton from './components/DashboardStatsSkeleton';
 
-// Force dynamic rendering
+// Force dynamic rendering for auth state
 export const dynamic = 'force-dynamic';
 
 export default function Home() {
@@ -15,7 +17,9 @@ export default function Home() {
         </p>
       </div>
 
-      <DashboardStats />
+      <Suspense fallback={<DashboardStatsSkeleton />}>
+        <DashboardStatsServer />
+      </Suspense>
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900">

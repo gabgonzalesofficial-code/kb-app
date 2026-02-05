@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { getCurrentUser } from '@/lib/auth';
 
+// Cache search results for 30 seconds (non-searchable queries)
+export const revalidate = 30;
+
 export interface SearchResult {
   id: string;
   title: string;
@@ -30,7 +33,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createServerSupabaseClient();
 
     if (!query) {
-      // Return all documents if no query
+      // Return all documents if no query - use cached response
       const { data, error } = await supabase
         .from('documents')
         .select('id, title, description, s3_key, content_text, created_at, created_by')
@@ -45,7 +48,15 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      return NextResponse.json({ results: data || [] });
+      // Add cache headers for non-search queries
+      return NextResponse.json(
+        { results: data || [] },
+        {
+          headers: {
+            'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+          },
+        }
+      );
     }
 
     // Use Postgres full-text search with tsvector
