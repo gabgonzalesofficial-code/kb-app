@@ -30,9 +30,16 @@ export default function LoginForm() {
         return;
       }
 
+      // Check for success message from password reset
+      const message = searchParams.get('message');
+      
       // Redirect to the page they came from or home
       const redirectedFrom = searchParams.get('redirectedFrom') || '/';
-      router.push(redirectedFrom);
+      if (message) {
+        router.push(`${redirectedFrom}?message=${encodeURIComponent(message)}`);
+      } else {
+        router.push(redirectedFrom);
+      }
       router.refresh();
     } catch (err) {
       setError('An unexpected error occurred');
@@ -40,8 +47,15 @@ export default function LoginForm() {
     }
   };
 
+  const successMessage = searchParams.get('message');
+
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+      {successMessage && (
+        <div className="rounded-md bg-green-50 p-4 text-sm text-green-800 dark:bg-green-900/20 dark:text-green-400">
+          {successMessage}
+        </div>
+      )}
       {error && (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-400">
           {error}
@@ -70,12 +84,20 @@ export default function LoginForm() {
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Password
-          </label>
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Password
+            </label>
+            <a
+              href="/forgot-password"
+              className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Forgot password?
+            </a>
+          </div>
           <input
             id="password"
             name="password"
