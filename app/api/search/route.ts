@@ -263,8 +263,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ results: combined });
     }
 
-    // If RPC exists, use it (results should already be sorted by relevance)
-    return NextResponse.json({ results: data || [] });
+    // Fallback: return empty results if no search method worked
+    return NextResponse.json({ results: [] });
   } catch (error) {
     console.error('Error in search API:', error);
     return NextResponse.json(
