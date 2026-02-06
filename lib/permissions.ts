@@ -8,6 +8,7 @@ export interface Permission {
   canDelete: boolean;
   canManageUsers: boolean;
   canRead: boolean;
+  canEditEmailTemplates: boolean;
 }
 
 /**
@@ -22,14 +23,16 @@ export function getRolePermissions(role?: string): Permission {
         canDelete: true,
         canManageUsers: true,
         canRead: true,
+        canEditEmailTemplates: true,
       };
     case 'editor':
       return {
         canUpload: true,
-        canEdit: true,
+        canEdit: true, // Can edit public documents (checked at API level)
         canDelete: false,
         canManageUsers: false,
         canRead: true,
+        canEditEmailTemplates: true,
       };
     case 'viewer':
       return {
@@ -38,6 +41,7 @@ export function getRolePermissions(role?: string): Permission {
         canDelete: false,
         canManageUsers: false,
         canRead: true,
+        canEditEmailTemplates: false, // Viewers can see but not edit
       };
     default:
       return {
@@ -46,6 +50,7 @@ export function getRolePermissions(role?: string): Permission {
         canDelete: false,
         canManageUsers: false,
         canRead: false,
+        canEditEmailTemplates: false,
       };
   }
 }

@@ -123,7 +123,7 @@ export default function VersionHistory({ documentId, onClose }: VersionHistoryPr
               {versions.map((version) => (
                 <div
                   key={version.id}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-800"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
@@ -146,7 +146,7 @@ export default function VersionHistory({ documentId, onClose }: VersionHistoryPr
                   </div>
                   <div className="ml-4">
                     {downloadingVersion === version.version_number ? (
-                      <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                         <svg
                           className="h-5 w-5 animate-spin"
                           fill="none"
@@ -171,7 +171,7 @@ export default function VersionHistory({ documentId, onClose }: VersionHistoryPr
                     ) : (
                       <button
                         onClick={() => handleDownloadVersion(version.version_number)}
-                        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                        className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
                       >
                         Download
                       </button>

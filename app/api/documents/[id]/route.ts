@@ -117,6 +117,38 @@ export async function PATCH(
       );
     }
 
+    const supabase = await createServerSupabaseClient();
+
+    // Fetch document to check if it's public and if user can edit it
+    const { data: document, error: fetchError } = await supabase
+      .from('documents')
+      .select('is_public, created_by')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !document) {
+      return NextResponse.json(
+        { error: 'Document not found' },
+        { status: 404 }
+      );
+    }
+
+    // Editors can only edit public documents OR their own private documents
+    // Admins can edit any document
+    if (user.role === 'editor') {
+      const isPublic = document.is_public === true || 
+                       document.is_public === null || 
+                       document.is_public === undefined;
+      const isOwnDocument = document.created_by === user.id;
+      
+      if (!isPublic && !isOwnDocument) {
+        return NextResponse.json(
+          { error: 'Forbidden: Editors can only edit public documents or their own private documents' },
+          { status: 403 }
+        );
+      }
+    }
+
     const body = await request.json();
     const { title, description } = body;
 
@@ -126,8 +158,6 @@ export async function PATCH(
         { status: 400 }
       );
     }
-
-    const supabase = await createServerSupabaseClient();
 
     // Update document
     const { data, error } = await supabase

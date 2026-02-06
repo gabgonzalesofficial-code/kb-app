@@ -12,6 +12,7 @@ export interface Document {
   content_text: string | null;
   created_at: string;
   created_by: string;
+  is_public?: boolean;
 }
 
 interface DocumentListProps {
@@ -24,7 +25,7 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const { permissions } = usePermissionsContext();
+  const { permissions, userId, role } = usePermissionsContext();
 
   const handleDownload = async (documentId: string) => {
     setDownloadingId(documentId);
@@ -143,13 +144,20 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
         {documents.map((document) => (
           <div
             key={document.id}
-            className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+            className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
           >
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
-                  {document.title}
-                </h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 break-words">
+                    {document.title}
+                  </h3>
+                  {document.is_public === false && (
+                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                      Private
+                    </span>
+                  )}
+                </div>
                 {document.description && (
                   <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                     {document.description}
@@ -187,18 +195,32 @@ export default function DocumentList({ documents, loading, onUpdate }: DocumentL
                   <>
                     <button
                       onClick={() => handleDownload(document.id)}
-                      className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                      className="w-full sm:w-auto rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
                     >
                       Download
                     </button>
-                    {permissions?.canEdit && (
-                      <button
-                        onClick={() => setEditingId(document.id)}
-                        className="w-full sm:w-auto rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        Edit
-                      </button>
-                    )}
+                    {permissions?.canEdit && (() => {
+                      // Editors can only edit public documents or their own private documents
+                      // Admins can edit any document
+                      const isPublic = document.is_public === true || 
+                                       document.is_public === null || 
+                                       document.is_public === undefined;
+                      const isOwnDocument = document.created_by === userId;
+                      const canEditThisDoc = role === 'admin' || 
+                                            isPublic ||
+                                            isOwnDocument;
+                      
+                      if (!canEditThisDoc) return null;
+                      
+                      return (
+                        <button
+                          onClick={() => setEditingId(document.id)}
+                          className="w-full sm:w-auto rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        >
+                          Edit
+                        </button>
+                      );
+                    })()}
                     {permissions?.canDelete && (
                       <button
                         onClick={() => handleDelete(document.id)}

@@ -14,6 +14,7 @@ export default function UploadForm() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [isPublic, setIsPublic] = useState(true); // Default to public
   const [uploadState, setUploadState] = useState<UploadState>({
     status: 'idle',
     progress: 0,
@@ -128,6 +129,7 @@ export default function UploadForm() {
           description: description || null,
           s3Key: key,
           contentText: null, // You can extract text from file if needed
+          isPublic: isPublic,
         }),
       });
 
@@ -143,6 +145,7 @@ export default function UploadForm() {
         setTitle('');
         setDescription('');
         setFile(null);
+        setIsPublic(true);
         router.push('/');
         router.refresh();
       }, 2000);
@@ -156,7 +159,7 @@ export default function UploadForm() {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
@@ -173,7 +176,7 @@ export default function UploadForm() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={uploadState.status === 'uploading' || uploadState.status === 'saving'}
-            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 disabled:opacity-50"
+            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-gray-100 dark:focus:ring-gray-100 disabled:opacity-50"
             placeholder="Enter document title"
           />
         </div>
@@ -192,7 +195,7 @@ export default function UploadForm() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             disabled={uploadState.status === 'uploading' || uploadState.status === 'saving'}
-            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 disabled:opacity-50"
+            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-gray-100 dark:focus:ring-gray-100 disabled:opacity-50"
             placeholder="Enter document description (optional)"
           />
         </div>
@@ -223,6 +226,42 @@ export default function UploadForm() {
           )}
         </div>
 
+        {/* Visibility Selection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Visibility
+          </label>
+          <div className="space-y-2">
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="visibility"
+                value="public"
+                checked={isPublic === true}
+                onChange={() => setIsPublic(true)}
+                disabled={uploadState.status === 'uploading' || uploadState.status === 'saving'}
+                className="h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300 disabled:opacity-50 dark:text-gray-100 dark:focus:ring-gray-100"
+              />
+              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Public</span>
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="visibility"
+                value="private"
+                checked={isPublic === false}
+                onChange={() => setIsPublic(false)}
+                disabled={uploadState.status === 'uploading' || uploadState.status === 'saving'}
+                className="h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300 disabled:opacity-50 dark:text-gray-100 dark:focus:ring-gray-100"
+              />
+              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Private</span>
+            </label>
+          </div>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Public documents are visible to all users. Private documents are only visible to you.
+          </p>
+        </div>
+
         {/* Progress Indicator */}
         {(uploadState.status === 'uploading' || uploadState.status === 'saving') && (
           <div className="space-y-2">
@@ -236,7 +275,7 @@ export default function UploadForm() {
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
               <div
-                className="h-full bg-blue-600 transition-all duration-300"
+                className="h-full bg-gray-900 dark:bg-gray-100 transition-all duration-300"
                 style={{ width: `${uploadState.progress}%` }}
               />
             </div>
@@ -281,7 +320,7 @@ export default function UploadForm() {
               uploadState.status === 'saving' ||
               uploadState.status === 'success'
             }
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
           >
             {uploadState.status === 'uploading'
               ? 'Uploading...'

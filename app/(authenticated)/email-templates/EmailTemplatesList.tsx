@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import SearchInput from '@/app/(authenticated)/documents/components/SearchInput';
+import { usePermissionsContext } from '@/app/contexts/PermissionsContext';
 
 interface EmailTemplate {
   id: string;
@@ -14,6 +15,7 @@ interface EmailTemplate {
 }
 
 export default function EmailTemplatesList() {
+  const { permissions } = usePermissionsContext();
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [filteredTemplates, setFilteredTemplates] = useState<EmailTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,16 +138,18 @@ export default function EmailTemplatesList() {
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Templates ({searchQuery ? filteredTemplates.length : templates.length})
         </h2>
-        <button
-          onClick={() => {
-            setShowForm(true);
-            setEditingId(null);
-            setFormData({ name: '', subject: '', body: '' });
-          }}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
-        >
-          + New Template
-        </button>
+        {permissions?.canEditEmailTemplates && (
+          <button
+            onClick={() => {
+              setShowForm(true);
+              setEditingId(null);
+              setFormData({ name: '', subject: '', body: '' });
+            }}
+            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
+          >
+            + New Template
+          </button>
+        )}
       </div>
 
       <div className="max-w-2xl">
@@ -162,8 +166,8 @@ export default function EmailTemplatesList() {
         </div>
       )}
 
-      {showForm && (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+      {showForm && permissions?.canEditEmailTemplates && (
+        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
             {editingId ? 'Edit Template' : 'New Template'}
           </h3>
@@ -211,7 +215,7 @@ export default function EmailTemplatesList() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
               >
                 {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
               </button>
@@ -242,7 +246,7 @@ export default function EmailTemplatesList() {
           filteredTemplates.map((template) => (
             <div
               key={template.id}
-              className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900"
+              className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -259,20 +263,22 @@ export default function EmailTemplatesList() {
                     Updated: {formatDate(template.updated_at)}
                   </p>
                 </div>
-                <div className="flex gap-2 ml-4">
-                  <button
-                    onClick={() => handleEdit(template)}
-                    className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(template.id)}
-                    className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900"
-                  >
-                    Delete
-                  </button>
-                </div>
+                {permissions?.canEditEmailTemplates && (
+                  <div className="flex gap-2 ml-4">
+                    <button
+                      onClick={() => handleEdit(template)}
+                      className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(template.id)}
+                      className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))

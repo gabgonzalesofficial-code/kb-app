@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, s3Key, contentText } = body;
+    const { title, description, s3Key, contentText, isPublic } = body;
 
     if (!title || !s3Key) {
       return NextResponse.json(
@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
       s3Key,
       contentText: contentText || null,
       createdBy: user.id,
+      isPublic: isPublic !== undefined ? isPublic : true, // Default to public if not specified
     });
 
     if (!result) {

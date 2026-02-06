@@ -132,14 +132,14 @@ export default function UsersPage() {
               setShowAddForm(true);
               setAddFormError(null);
             }}
-            className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+            className="w-full sm:w-auto rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
           >
             + Add User
           </button>
         </div>
 
         {showAddForm && (
-          <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Add New User
             </h2>
@@ -222,7 +222,7 @@ export default function UsersPage() {
                 <button
                   type="submit"
                   disabled={addingUser}
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                  className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
                 >
                   {addingUser ? 'Creating...' : 'Create User'}
                 </button>
@@ -254,7 +254,7 @@ export default function UsersPage() {
         ) : (
           <>
             {/* Desktop Table View */}
-            <div className="hidden md:block rounded-lg border border-gray-200 bg-white shadow dark:border-gray-800 dark:bg-gray-900">
+            <div className="hidden md:block rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                   <thead className="bg-gray-50 dark:bg-gray-800">
@@ -295,7 +295,7 @@ export default function UsersPage() {
                               value={user.role}
                               onChange={(e) => handleRoleChange(user.id, e.target.value)}
                               disabled={updatingId === user.id}
-                              className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:opacity-50"
+                              className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm text-gray-900 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:border-gray-100 dark:focus:ring-gray-100 disabled:opacity-50"
                             >
                               <option value="viewer">Viewer</option>
                               <option value="editor">Editor</option>
@@ -330,7 +330,7 @@ export default function UsersPage() {
               {users.map((user) => (
                 <div
                   key={user.id}
-                  className="rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-800 dark:bg-gray-900"
+                  className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -355,7 +355,7 @@ export default function UsersPage() {
                       value={user.role}
                       onChange={(e) => handleRoleChange(user.id, e.target.value)}
                       disabled={updatingId === user.id}
-                      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:opacity-50"
+                      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-gray-900 focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:border-gray-100 dark:focus:ring-gray-100 disabled:opacity-50"
                     >
                       <option value="viewer">Viewer</option>
                       <option value="editor">Editor</option>
@@ -385,7 +385,7 @@ export default function UsersPage() {
         {/* Reset Password Modal */}
         {showResetPasswordModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-            <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900 w-full max-w-md">
+            <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 w-full max-w-md">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Reset User Password
               </h2>
@@ -491,7 +491,7 @@ export default function UsersPage() {
                   <button
                     type="submit"
                     disabled={resettingPasswordId !== null}
-                    className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                    className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
                   >
                     {resettingPasswordId ? 'Resetting...' : 'Reset Password'}
                   </button>

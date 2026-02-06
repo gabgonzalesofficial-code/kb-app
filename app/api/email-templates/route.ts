@@ -52,10 +52,10 @@ export async function POST(request: NextRequest) {
 
     // Check permission (admin and editor can create templates)
     try {
-      requirePermission(user, 'canUpload'); // Using canUpload as proxy for admin/editor
+      requirePermission(user, 'canEditEmailTemplates');
     } catch (error) {
       return NextResponse.json(
-        { error: 'Forbidden: Admin or Editor role required' },
+        { error: 'Forbidden: Admin or Editor role required to create email templates' },
         { status: 403 }
       );
     }

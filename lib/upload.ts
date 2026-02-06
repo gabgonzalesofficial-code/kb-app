@@ -6,6 +6,7 @@ export interface DocumentMetadata {
   s3Key: string;
   contentText?: string;
   createdBy: string; // References profiles.id
+  isPublic?: boolean; // Whether the document is public or private
 }
 
 /**
@@ -25,6 +26,7 @@ export async function saveDocumentMetadata(
       s3_key: metadata.s3Key,
       content_text: metadata.contentText || null,
       created_by: metadata.createdBy,
+      is_public: metadata.isPublic !== undefined ? metadata.isPublic : true, // Default to public if not specified
     })
     .select('id')
     .single();

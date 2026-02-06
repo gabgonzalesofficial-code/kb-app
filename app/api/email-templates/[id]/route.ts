@@ -21,10 +21,10 @@ export async function PATCH(
 
     // Check permission (admin and editor can update templates)
     try {
-      requirePermission(user, 'canUpload');
+      requirePermission(user, 'canEditEmailTemplates');
     } catch (error) {
       return NextResponse.json(
-        { error: 'Forbidden: Admin or Editor role required' },
+        { error: 'Forbidden: Admin or Editor role required to edit email templates' },
         { status: 403 }
       );
     }
@@ -88,10 +88,10 @@ export async function DELETE(
 
     // Check permission (admin and editor can delete templates)
     try {
-      requirePermission(user, 'canUpload');
+      requirePermission(user, 'canEditEmailTemplates');
     } catch (error) {
       return NextResponse.json(
-        { error: 'Forbidden: Admin or Editor role required' },
+        { error: 'Forbidden: Admin or Editor role required to delete email templates' },
         { status: 403 }
       );
     }

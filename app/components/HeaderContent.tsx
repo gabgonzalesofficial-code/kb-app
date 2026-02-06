@@ -2,6 +2,7 @@
 
 import LogoutButton from './LogoutButton';
 import MobileMenuButton from './MobileMenuButton';
+import ThemeToggle from './ThemeToggle';
 
 interface HeaderContentProps {
   user: {
@@ -22,6 +23,7 @@ export default function HeaderContent({ user }: HeaderContentProps) {
         </h1>
       </div>
       <nav className="flex items-center gap-1 sm:gap-2 lg:gap-4 flex-shrink-0">
+        <ThemeToggle />
         {user && (
           <div className="flex items-center gap-1 sm:gap-2 lg:gap-3">
             <div className="hidden sm:block text-right">

@@ -48,8 +48,11 @@ export default function NotesList() {
       const response = await fetch('/api/notes');
       if (!response.ok) throw new Error('Failed to fetch notes');
       const data = await response.json();
-      setNotes(data.notes || []);
-      setFilteredNotes(data.notes || []);
+      const fetchedNotes = data.notes || [];
+      setNotes(fetchedNotes);
+      setFilteredNotes(fetchedNotes);
+      // Initialize all notes as blurred by default
+      setBlurredNotes(new Set(fetchedNotes.map((note: Note) => note.id)));
     } catch (error) {
       console.error('Error fetching notes:', error);
     } finally {
@@ -152,7 +155,7 @@ export default function NotesList() {
             setEditingId(null);
             setFormData({ title: '', content: '' });
           }}
-          className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+          className="w-full sm:w-auto rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
         >
           + New Note
         </button>
@@ -208,7 +211,7 @@ export default function NotesList() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full sm:w-auto rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
+                className="w-full sm:w-auto rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition-colors"
               >
                 {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
               </button>
@@ -241,7 +244,7 @@ export default function NotesList() {
             return (
               <div
                 key={note.id}
-                className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-800 dark:bg-gray-900"
+                className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
               >
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                   <div className="flex-1 min-w-0">

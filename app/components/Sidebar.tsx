@@ -27,7 +27,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     { label: 'Dashboard', href: '/', icon: '📊', permission: null },
     { label: 'Upload', href: '/upload', icon: '📤', permission: 'canUpload' as const },
     { label: 'Documents', href: '/documents', icon: '📄', permission: null },
-    { label: 'Email Templates', href: '/email-templates', icon: '📧', permission: 'canUpload' as const }, // Admin and Editor
+    { label: 'Email Templates', href: '/email-templates', icon: '📧', permission: null }, // All users can see, editors/admins can edit
+    { label: 'Tools', href: '/tools', icon: '🔧', permission: null }, // All users can see, editors/admins can edit
     { label: 'Personal Notes', href: '/notes', icon: '📝', permission: null }, // All users
     { label: 'Users', href: '/users', icon: '👥', permission: 'canManageUsers' as const },
     { label: 'Settings', href: '/settings', icon: '⚙️', permission: null },
@@ -45,7 +46,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white transition-transform duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900 ${
+        className={`fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white transition-transform duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900 shadow-sm ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
@@ -89,8 +90,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         href={item.href}
                         className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                           isActive
-                            ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/30 dark:text-blue-300'
-                            : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+                            ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
+                            : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                         }`}
                       >
                         <span>{item.icon}</span>
@@ -106,8 +107,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     href={item.href}
                     className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/30 dark:text-blue-300'
-                        : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+                        ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
+                        : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
                   >
                     <span>{item.icon}</span>
