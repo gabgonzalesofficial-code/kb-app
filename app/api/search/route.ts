@@ -170,8 +170,10 @@ export async function GET(request: NextRequest) {
 
         // Sort by relevance (higher first), then by created_at
         resultsWithRelevance.sort((a, b) => {
-          if (a.relevance !== b.relevance) {
-            return (b.relevance || 0) - (a.relevance || 0);
+          const aRelevance = typeof a.relevance === 'number' ? a.relevance : 0;
+          const bRelevance = typeof b.relevance === 'number' ? b.relevance : 0;
+          if (aRelevance !== bRelevance) {
+            return bRelevance - aRelevance;
           }
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         });
@@ -250,8 +252,10 @@ export async function GET(request: NextRequest) {
 
       // Sort by relevance (higher first), then by created_at
       combined.sort((a, b) => {
-        if (a.relevance !== b.relevance) {
-          return (b.relevance || 0) - (a.relevance || 0);
+        const aRelevance = typeof a.relevance === 'number' ? a.relevance : 0;
+        const bRelevance = typeof b.relevance === 'number' ? b.relevance : 0;
+        if (aRelevance !== bRelevance) {
+          return bRelevance - aRelevance;
         }
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       });
