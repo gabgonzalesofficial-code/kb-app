@@ -14,80 +14,39 @@ export default function ResetPasswordForm() {
   const [isValidToken, setIsValidToken] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Check if we have a valid session/token from the reset link
-    async function checkSession() {
-      const supabase = createClient();
-      
-      // Check for hash fragments in URL (Supabase redirects with hash)
-      const hash = window.location.hash;
-      
-      if (hash && hash.includes('access_token')) {
-        try {
-          // Parse the hash - Supabase format: #access_token=...&type=recovery&refresh_token=...
-          const hashParams = new URLSearchParams(hash.substring(1));
-          const accessToken = hashParams.get('access_token');
-          const refreshToken = hashParams.get('refresh_token');
-          const type = hashParams.get('type');
-          
-          console.log('Found hash with type:', type);
-          
-          if (accessToken && type === 'recovery') {
-            // Exchange the token for a session
-            const { data, error: exchangeError } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || '',
-            });
-            
-            if (exchangeError) {
-              console.error('Error exchanging token:', exchangeError);
-              setIsValidToken(false);
-              return;
-            }
-            
-            if (data.session) {
-              console.log('Session established successfully');
-              setIsValidToken(true);
-              // Clean up the URL by removing hash
-              window.history.replaceState(null, '', window.location.pathname + window.location.search);
-              return;
-            } else {
-              console.error('No session after exchange');
-              setIsValidToken(false);
-              return;
-            }
-          } else {
-            console.log('Hash found but missing access_token or wrong type:', { accessToken: !!accessToken, type });
-            setIsValidToken(false);
-            return;
-          }
-        } catch (err) {
-          console.error('Error processing hash:', err);
-          setIsValidToken(false);
-          return;
-        }
-      }
-      
-      // Check for existing session (user might have already exchanged the token)
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        console.error('Error getting session:', sessionError);
-        setIsValidToken(false);
-        return;
-      }
-      
-      if (session) {
-        console.log('Existing session found');
-        setIsValidToken(true);
-      } else {
-        // If no hash and no session, the link is invalid
-        console.log('No hash and no session - invalid link');
-        setIsValidToken(false);
-      }
+    const supabase = createClient();
+
+    // Check for error query param (from /auth/confirm)
+    const errorParam = searchParams.get('error');
+    if (errorParam === 'invalid_link') {
+      setIsValidToken(false);
+      return;
     }
 
-    checkSession();
-  }, []);
+    // Listen for auth state changes — Supabase fires PASSWORD_RECOVERY
+    // after the token is verified (via /auth/confirm route)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY' && session) {
+          setIsValidToken(true);
+        }
+      }
+    );
+
+    // Also check if there's already an active session (e.g. from /auth/confirm redirect)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setIsValidToken(true);
+      } else if (isValidToken === null) {
+        // No session and no PASSWORD_RECOVERY event yet — link is invalid
+        setIsValidToken(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [searchParams]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -113,7 +72,7 @@ export default function ResetPasswordForm() {
 
     try {
       const supabase = createClient();
-      
+
       // Update password
       const { error: updateError } = await supabase.auth.updateUser({
         password: password,

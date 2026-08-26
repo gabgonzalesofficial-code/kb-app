@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+#AI
+.freebuff
+
 # testing
 /coverage
 
